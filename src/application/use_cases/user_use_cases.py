@@ -1,12 +1,13 @@
+from dataclasses import dataclass
 from typing import List
 
 from src.domain.entities.user import User
 from src.infrastructure.database.json.user_repository import UserRepository
 
 
+@dataclass(slots=True, kw_only=True)
 class UserUseCases:
-    def __init__(self, repository: UserRepository):
-        self.repository = repository
+    repository: UserRepository
 
     def create_user(self, user: User):
         self.repository.add(user)
