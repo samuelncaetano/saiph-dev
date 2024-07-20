@@ -34,7 +34,6 @@ class JSONRepository:
 
     def add(self, item: Any):
         data = self.load_data()
-        item = user_to_pydantic(item)
         data.append(item)
         self.save_data(data)
 
