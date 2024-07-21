@@ -33,6 +33,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 user_data = json.loads(post_data)
                 user = user_controller.create_user(user_data)
                 self._send_response(201, "application/json", json.dumps(asdict(user)))
+            except ValueError as error:
+                self._send_response(400, "application/json", json.dumps({"error": str(error)}))
             except Exception as error:
                 self._send_response(500, "application/json", json.dumps({"error": str(error)}))
         else:
