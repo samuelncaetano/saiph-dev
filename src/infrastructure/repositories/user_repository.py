@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Any
+from typing import Any, List
 
 from pydantic import ValidationError  # pylint: disable = E0401  # type: ignore
 
@@ -22,6 +22,8 @@ class UserRepository(JSONRepository):
         except ValidationError as error:
             raise ValueError(f"Invalid user data: {error}")  # pylint: disable = W0707
 
-    def get_all(self):
+    def get_all(self) -> List[dict[str, Any]]:
         data = self.load_data()
-        return list(map(pydantic_to_user, data))
+        data = list(map(pydantic_to_user, data))
+        data = [asdict(user) for user in data]
+        return data

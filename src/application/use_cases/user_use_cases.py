@@ -12,5 +12,5 @@ class UserUseCases:
     def create_user(self, user: User) -> dict[str, Any]:
         return self.repository.add(user)
 
-    def list_users(self) -> List[User]:
+    def list_users(self) -> List[dict[str, Any]]:
         return self.repository.get_all()

@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -71,9 +72,7 @@ def test_add_user(user_repository: UserRepository, user_builder: User):
     user_repository.add(user_builder)
     users = user_repository.get_all()
     assert len(users) == 1
-    assert users[0].name == user_builder.get_name()
-    assert users[0].email == user_builder.get_email()
-    assert users[0].age == user_builder.get_age()
+    assert users == [asdict(user_builder)]
 
 
 def test_create_user(user_controller: UserController, user_builder: User):
@@ -101,7 +100,7 @@ def test_list_users(user_controller: UserController, user_repository: UserReposi
     listed_users = user_controller.list_users()
 
     assert len(listed_users) == len(users)
-    assert listed_users == users
+    assert listed_users == user_data_list
 
 
 if __name__ == "__main__":
