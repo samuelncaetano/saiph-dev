@@ -8,7 +8,7 @@ from src.application.services.user_schema import user_to_pydantic
 from src.application.use_cases.user_use_cases import UserUseCases
 from src.domain.builders.user_builder import UserBuilder  # type: ignore
 from src.domain.entities.user import User  # type: ignore
-from src.infrastructure.repositories.json.user_repository import UserRepository
+from src.infrastructure.repositories.user_repository import UserRepository
 from src.main.controllers.user_controller import UserController
 
 
@@ -81,9 +81,7 @@ def test_create_user(user_controller: UserController, user_builder: User):
 
     created_user = user_controller.create_user(user_data)  # type: ignore
 
-    assert created_user.name == user_builder.get_name()
-    assert created_user.email == user_builder.get_email()
-    assert created_user.age == user_builder.get_age()
+    assert created_user == user_data
 
 
 def test_list_users(user_controller: UserController, user_repository: UserRepository):

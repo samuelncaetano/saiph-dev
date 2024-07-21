@@ -4,7 +4,7 @@ from pathlib import Path
 from threading import Thread
 
 import pytest  # type: ignore
-import requests  # type: ignore
+import requests
 
 from src.main.routes.server import RequestHandler
 
