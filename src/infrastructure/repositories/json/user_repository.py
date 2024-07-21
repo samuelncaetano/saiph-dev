@@ -1,5 +1,5 @@
 from src.domain.entities.user import UserModel
-from src.infrastructure.database.json.json_repository import JSONRepository
+from src.infrastructure.repositories.json.json_repository import JSONRepository
 
 
 class UserRepository(JSONRepository):
