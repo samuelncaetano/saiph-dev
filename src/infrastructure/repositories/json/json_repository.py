@@ -1,6 +1,8 @@
 import json
+import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Any
 
 from src.application.services.user_schema import pydantic_to_user, user_to_pydantic
@@ -28,9 +30,14 @@ class JSONRepository:
             return [self.model(**item) for item in data]
 
     def save_data(self, data: Any):
-        with open(self._path, "w") as f:  # pylint: disable = W1514, C0103
-            data = map(user_to_pydantic, data)
-            json.dump([item.model_dump() for item in data], f)
+        temp_file = NamedTemporaryFile("w", delete=False, dir=self._path.parent)  # pylint: disable = R1732
+        try:
+            data = list(map(user_to_pydantic, data))
+            json.dump([item.model_dump() for item in data], temp_file)
+            temp_file.flush()
+            shutil.move(temp_file.name, self._path)
+        finally:
+            temp_file.close()
 
     def add(self, item: Any):
         data = self.load_data()
