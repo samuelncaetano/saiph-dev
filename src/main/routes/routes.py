@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from functools import wraps
 
 from src.domain.entities.user import User
@@ -23,10 +22,10 @@ def route(path: str, method: str):
 @route("/users", "GET")
 def get_users(controller: UserController):
     users = controller.list_users()
-    return 200, [asdict(user) for user in users]
+    return 200, users
 
 
 @route("/users", "POST")
 def post_user(controller: UserController, user_data: User):
     user = controller.create_user(user_data)
-    return 201, asdict(user)
+    return 201, user

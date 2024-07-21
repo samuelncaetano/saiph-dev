@@ -1,5 +1,5 @@
 from src.application.use_cases.user_use_cases import UserUseCases
-from src.infrastructure.repositories.json.user_repository import UserRepository
+from src.infrastructure.repositories.user_repository import UserRepository
 from src.main.controllers.user_controller import UserController
 
 
