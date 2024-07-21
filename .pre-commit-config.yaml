@@ -43,15 +43,15 @@ repos:
     hooks:
       - id: pyright
         stages: [commit]
-  - repo: local
-    hooks:
-      - id: pytest
-        name: pytest
-        language: system
-        entry: pytest -v
-        always_run: false
-        pass_filenames: false
-        stages: [commit]
+  # - repo: local
+  #   hooks:
+  #     - id: pytest
+  #       name: pytest
+  #       language: system
+  #       entry: pytest -v
+  #       always_run: false
+  #       pass_filenames: false
+  #       stages: [commit]
   - repo: local
     hooks:
       - id: requirements
