@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from typing_extensions import Self  # pylint: disable = E0401
+from typing_extensions import Self  # pylint: disable = E0401  # type: ignore
 
 from src.application.services.user_schema import user_schema
 from src.domain.entities.user import User

@@ -8,7 +8,7 @@ from src.application.services.user_schema import user_to_pydantic
 from src.application.use_cases.user_use_cases import UserUseCases
 from src.domain.builders.user_builder import UserBuilder  # type: ignore
 from src.domain.entities.user import User  # type: ignore
-from src.infrastructure.database.json.user_repository import UserRepository
+from src.infrastructure.repositories.json.user_repository import UserRepository
 from src.main.controllers.user_controller import UserController
 
 

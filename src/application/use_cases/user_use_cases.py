@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 from src.domain.entities.user import User
-from src.infrastructure.database.json.user_repository import UserRepository
+from src.infrastructure.repositories.json.user_repository import UserRepository
 
 
 @dataclass(slots=True, kw_only=True)
