@@ -2,7 +2,7 @@ import json
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from config import configure_dependencies
+from src.main.routes.config import configure_dependencies
 
 user_controller = configure_dependencies()
 
