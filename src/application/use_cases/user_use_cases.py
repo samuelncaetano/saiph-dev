@@ -14,3 +14,12 @@ class UserUseCases:
 
     def list_users(self) -> List[dict[str, Any]]:
         return self.repository.get_all()
+
+    def get_by_id(self, user_id: int) -> dict[str, Any]:
+        return self.repository.get_by_id(user_id)
+
+    def update_user(self, user: dict[str, Any]) -> dict[str, Any]:
+        return self.repository.update(user)
+
+    def delete_user(self, user_id: int) -> List[dict[str, Any]]:
+        return self.repository.delete(user_id)
