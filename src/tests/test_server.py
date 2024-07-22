@@ -4,7 +4,7 @@ from pathlib import Path
 from threading import Thread
 
 import pytest  # type: ignore
-import requests
+import requests  # type: ignore
 
 from src.main.routes.server import RequestHandler
 
@@ -52,6 +52,25 @@ def test_create_user_invalid_data(http_server):  # type: ignore
     response = requests.post(f"http://localhost:{PORT}/users", json=invalid_user_data)
     assert response.status_code == 400
     assert "error" in response.json()
+
+
+def test_update_user(http_server):  # type: ignore
+    user_data = {"id": 1, "name": "John Doe", "email": "john.doe@example.com", "age": 30}
+    user_data_update = {"id": 1, "name": "Mary Doe", "email": "mary.doe@example.com", "age": 30}
+    response = requests.post(f"http://localhost:{PORT}/users", json=user_data)
+    response = requests.put(f"http://localhost:{PORT}/users/1", json=user_data_update)
+    assert response.status_code == 200
+    assert response.json()["name"] == "Mary Doe"
+
+
+def test_delete_user(http_server):  # type: ignore
+    user_data = {"id": 1, "name": "John Doe", "email": "john.doe@example.com", "age": 30}
+    response = requests.post(f"http://localhost:{PORT}/users", json=user_data)
+    response = requests.delete(f"http://localhost:{PORT}/users/1")
+    remaining_users = response.json()
+
+    assert response.status_code == 200
+    assert remaining_users == []
 
 
 if __name__ == "__main__":

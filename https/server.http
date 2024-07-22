@@ -7,7 +7,21 @@ Content-Type: application/json
     "email": "john.doe@example.com",
     "age": 30
 }
-
 ###
 GET http://localhost:8080/users
+Content-Type: application/json
+
+###
+PUT http://localhost:8080/users/1
+Content-Type: application/json
+
+{
+    "id": 1,
+    "name": "Mary Doe",
+    "email": "mary.doe@example.com",
+    "age": 30
+}
+
+###
+DELETE http://localhost:8080/users/1
 Content-Type: application/json
