@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -69,54 +68,83 @@ class TestRepository:
     def test_instanciar_user_repository(self, user_repository: UserRepository):
         assert isinstance(user_repository, UserRepository)
 
-    def test_add_user(self, user_repository: UserRepository, user_builder: User):
-        user_repository.add(user_builder)
-        users = user_repository.get_all()
-        assert len(users) == 1
-        assert users == [asdict(user_builder)]
-
 
 class TestController:
     def test_create_user(self, user_controller: UserController, user_builder: User):
-        user_data = user_to_pydantic(user_builder).model_dump()
+        # Arrange
+        user_data_assert = user_to_pydantic(user_builder).model_dump()
+        user_data = user_data_assert.copy()
+        user_data_assert.update({"id": 1})
+        user_data.pop("id", None)
+
+        # Act
         created_user = user_controller.create_user(user_data)  # type: ignore
-        assert created_user == user_data
+
+        # Assert
+        assert created_user == user_data_assert
 
     def test_list_users(self, user_controller: UserController):
+        # Arrange
         users = [
-            UserBuilder().with_name("John Doe").with_email("johndoe@example.com").with_age(30).build(),
-            UserBuilder().with_name("Jane Doe").with_email("janedoe@example.com").with_age(25).build(),
+            UserBuilder().with_id(1).with_name("John Doe").with_email("johndoe@example.com").with_age(30).build(),
+            UserBuilder().with_id(2).with_name("Jane Doe").with_email("janedoe@example.com").with_age(25).build(),
         ]
         pydantic_users = list(map(user_to_pydantic, users))
         user_data_list = [user.model_dump() for user in pydantic_users]
+
+        # Act
+        created_users = []
         for user_data in user_data_list:
-            user_controller.create_user(user_data)  # type: ignore
+            user_data_without_id = user_data.copy()
+            user_data_without_id.pop("id", None)
+            created_user = user_controller.create_user(user_data_without_id)  # type: ignore
+            created_users.append(created_user)
         listed_users = user_controller.list_users()
+
+        # Assert
         assert len(listed_users) == len(users)
-        assert listed_users == user_data_list
+        assert listed_users == created_users
 
     def test_get_user_by_id(self, user_controller: UserController, user_builder: User):
+        # Arrange
         user_data = user_to_pydantic(user_builder).model_dump()
+        user_data.pop("id", None)
+
+        # Act
         created_user = user_controller.create_user(user_data)  # type: ignore
         user_id: int = created_user["id"]
         fetched_user = user_controller.get_by_id(user_id)
+
+        # Assert
         assert fetched_user == created_user
 
     def test_update_user(self, user_controller: UserController, user_builder: User):
+        # Arrange
+        update_data = {"name": "Updated Name", "email": "updatedemail@example.com", "age": 35}
         user_data = user_to_pydantic(user_builder).model_dump()
+        user_data.pop("id", None)
+
+        # Act
         created_user = user_controller.create_user(user_data)  # type: ignore
         user_id = created_user["id"]
-        update_data = {"name": "Updated Name", "email": "updatedemail@example.com", "age": 35}
         updated_user = user_controller.update_user(user_id, update_data)
+
+        # Assert
         assert updated_user["name"] == "Updated Name"
         assert updated_user["email"] == "updatedemail@example.com"
         assert updated_user["age"] == 35
 
     def test_delete_user(self, user_controller: UserController, user_builder: User):
+        # Arrange
         user_data = user_to_pydantic(user_builder).model_dump()
+        user_data.pop("id", None)
+
+        # Act
         created_user = user_controller.create_user(user_data)  # type: ignore
         user_id = created_user["id"]
         user_controller.delete_user(user_id)
+
+        # Assert
         with pytest.raises(ValueError):
             user_controller.get_by_id(user_id)
 

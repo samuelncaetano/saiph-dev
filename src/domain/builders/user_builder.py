@@ -13,6 +13,10 @@ class UserBuilder:
     email: str = ""
     age: int = 0
 
+    def with_id(self, id: int) -> Self:  # pylint: disable = C0103, W0622
+        self.id = id
+        return self
+
     def with_name(self, name: str) -> Self:
         self.name = name
         return self

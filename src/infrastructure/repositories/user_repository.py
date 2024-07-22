@@ -12,8 +12,17 @@ class UserRepository(JSONRepository):
     def __init__(self, db_path: str):
         super().__init__(db_path=db_path, model=UserModel)
 
+    def _get_next_id(self):
+        data = self.load_data()
+        if not data:
+            return 1
+        max_id = max(user.id for user in data)
+        return max_id + 1
+
     def add(self, item: User) -> dict[str, Any]:
         try:
+            if item.id == 0:
+                item.id = self._get_next_id()
             data = self.load_data()
             data.append(item)
             data = list(map(user_to_pydantic, data))
@@ -48,7 +57,6 @@ class UserRepository(JSONRepository):
 
     def delete(self, user_id: int) -> List[dict[str, Any]]:
         data = self.load_data()
-        data = list(map(pydantic_to_user, data))
         for idx, item in enumerate(data):
             if item.id == user_id:
                 del data[idx]
