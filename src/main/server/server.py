@@ -1,20 +1,17 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from src.main.routes.config import configure_dependencies
-from src.main.routes.routes import routes as app_routes
-
-user_controller = configure_dependencies()
+from src.main.routes.index import routes
 
 
 class RequestHandler(BaseHTTPRequestHandler):
-    routes = app_routes
+    routes = routes
 
-    def _send_response(self, status_code, content_type, data):  # type: ignore
-        self.send_response(status_code)  # type: ignore
-        self.send_header("Content-type", content_type)  # type: ignore
+    def _send_response(self, status_code: int, content_type: str, data: str):
+        self.send_response(status_code)
+        self.send_header("Content-type", content_type)
         self.end_headers()
-        self.wfile.write(data.encode("utf-8"))  # type: ignore
+        self.wfile.write(data.encode("utf-8"))
 
     def do_GET(self):  # pylint: disable = C0103
         self._handle_request("GET")
@@ -30,22 +27,22 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def _handle_request(self, method: str):
         path = self.path
-        for pattern, route_method, handler in self.routes:
+        for pattern, route_method, handler, controller in self.routes:
             match = pattern.match(path)
             if match and method == route_method:
                 try:
                     if method in ["POST", "PUT"]:
                         content_length = int(self.headers["Content-Length"])
                         post_data = self.rfile.read(content_length).decode("utf-8")
-                        user_data = json.loads(post_data)
+                        request_data = json.loads(post_data)
                         if method == "POST":
-                            status_code, response = handler(user_controller, user_data)
+                            status_code, response = handler(controller, request_data)()
                         else:
-                            status_code, response = handler(user_controller, **match.groupdict(), user_data=user_data)
+                            status_code, response = handler(controller, **match.groupdict())(request_data)
                     elif method == "DELETE":
-                        status_code, response = handler(user_controller, **match.groupdict())
+                        status_code, response = handler(controller, **match.groupdict())()
                     else:
-                        status_code, response = handler(user_controller, **match.groupdict())
+                        status_code, response = handler(controller, **match.groupdict())()
                     self._send_response(status_code, "application/json", json.dumps(response))  # type: ignore
                 except ValueError as error:
                     self._send_response(400, "application/json", json.dumps({"error": str(error)}))
@@ -55,10 +52,14 @@ class RequestHandler(BaseHTTPRequestHandler):
         self._send_response(404, "text/plain", "Not Found")
 
 
-def run(server_class=HTTPServer, handler_class=RequestHandler, port=8080):  # type: ignore
+def run(
+    server_class: type[HTTPServer] = HTTPServer,
+    handler_class: type[RequestHandler] = RequestHandler,
+    port: int = 8080,
+):
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
-    print(f"Starting httpd server on port {port}...")
+    print(f"Starting HTTP server on port {port}...")
     httpd.serve_forever()
 
 

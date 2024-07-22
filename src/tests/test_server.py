@@ -6,7 +6,7 @@ from threading import Thread
 import pytest  # type: ignore
 import requests  # type: ignore
 
-from src.main.routes.server import RequestHandler
+from src.main.server.server import RequestHandler
 
 # Configurações do servidor
 PORT = 8081
