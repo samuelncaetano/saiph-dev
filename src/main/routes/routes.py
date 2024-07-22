@@ -1,6 +1,6 @@
 from functools import wraps
+from typing import Any
 
-from src.domain.entities.user import User
 from src.main.controllers.user_controller import UserController
 
 routes = []
@@ -26,6 +26,6 @@ def get_users(controller: UserController):
 
 
 @route("/users", "POST")
-def post_user(controller: UserController, user_data: User):
+def post_user(controller: UserController, user_data: dict[str, Any]):
     user = controller.create_user(user_data)
     return 201, user
