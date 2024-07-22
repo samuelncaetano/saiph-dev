@@ -27,3 +27,31 @@ class UserRepository(JSONRepository):
         data = list(map(pydantic_to_user, data))
         data = [asdict(user) for user in data]
         return data
+
+    def get_by_id(self, user_id: int) -> dict[str, Any]:
+        data = self.load_data()
+        data = list(map(pydantic_to_user, data))
+        for item in data:
+            if item.id == user_id:
+                return asdict(item)
+        raise ValueError("User not found")
+
+    def update(self, updated_user_data: dict[str, Any]) -> dict[str, Any]:
+        data = self.load_data()
+        user_model = UserModel(**updated_user_data)
+        for idx, item in enumerate(data):
+            if item.id == user_model.id:
+                data[idx] = user_model
+                self.save_data(data)
+                return user_model.model_dump()
+        raise ValueError("User not found")
+
+    def delete(self, user_id: int) -> List[dict[str, Any]]:
+        data = self.load_data()
+        data = list(map(pydantic_to_user, data))
+        for idx, item in enumerate(data):
+            if item.id == user_id:
+                del data[idx]
+                self.save_data(data)
+                return self.get_all()
+        raise ValueError("User not found")
