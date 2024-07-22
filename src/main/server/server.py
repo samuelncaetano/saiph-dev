@@ -1,7 +1,8 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from src.main.routes.index import routes
+from src.main.config.config import configure_user_dependencies
+from src.main.routes.index import register_routes, routes
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -56,7 +57,10 @@ def run(
     server_class: type[HTTPServer] = HTTPServer,
     handler_class: type[RequestHandler] = RequestHandler,
     port: int = 8080,
+    db_path_user: str = "database/users.json",
 ):
+    user_controller = configure_user_dependencies(db_path_user)
+    register_routes(user_controller)
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
     print(f"Starting HTTP server on port {port}...")
