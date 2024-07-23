@@ -9,7 +9,8 @@ def register_route(pattern, method, handler, controller):  # type: ignore
 
 
 def register_user_routes(controller: UserController):
-    for route in user_routes:
+    sorted_user_routes = sorted(user_routes, key=lambda route: len(route[0].pattern), reverse=True)  # type: ignore
+    for route in sorted_user_routes:
         register_route(*route, controller)
 
 
