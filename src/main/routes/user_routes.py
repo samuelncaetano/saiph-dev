@@ -1,22 +1,16 @@
 import re
-from functools import wraps
 from typing import Any
 
 from src.main.controllers.user_controller import UserController
 
-user_routes = []
+routes = []
 
 
 def route(path: str, method: str):
     def decorator(func):  # type: ignore
         pattern = re.compile(re.sub(r"<(\w+)>", r"(?P<\1>\\d+)", path))
-        user_routes.append((pattern, method, func))
-
-        @wraps(func)  # type: ignore
-        def wrapper(*args, **kwargs):  # type: ignore
-            return func(*args, **kwargs)
-
-        return wrapper
+        routes.append((pattern, method, func))
+        return func
 
     return decorator
 
@@ -33,8 +27,8 @@ def get_users(controller: UserController):
 @route("/users/<id>", "GET")
 def get_users_by_id(controller: UserController, id: int):  # pylint: disable = C0103, W0622
     def handler():
-        users = controller.get_by_id(int(id))
-        return 200, users
+        user = controller.get_by_id(int(id))
+        return 200, user
 
     return handler
 
@@ -64,3 +58,7 @@ def delete_user(controller: UserController, id: int):  # pylint: disable = C0103
         return 200, users
 
     return handler
+
+
+def get_routes():
+    return sorted(routes, key=lambda route: len(route[0].pattern), reverse=True)  # type: ignore
