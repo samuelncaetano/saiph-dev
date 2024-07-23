@@ -11,7 +11,7 @@ GET http://localhost:8080/users
 Content-Type: application/json
 
 ###
-PUT http://localhost:8080/users/
+PATCH http://localhost:8080/users/
 Content-Type: application/json
 
 {

@@ -20,8 +20,8 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):  # pylint: disable = C0103
         self._handle_request("POST")
 
-    def do_PUT(self):  # pylint: disable = C0103
-        self._handle_request("PUT")
+    def do_PATCH(self):  # pylint: disable = C0103
+        self._handle_request("PATCH")
 
     def do_DELETE(self):  # pylint: disable = C0103
         self._handle_request("DELETE")
@@ -32,7 +32,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             match = pattern.match(path)
             if match and method == route_method:
                 try:
-                    if method in ["POST", "PUT"]:
+                    if method in ["POST", "PATCH"]:
                         content_length = int(self.headers["Content-Length"])
                         post_data = self.rfile.read(content_length).decode("utf-8")
                         request_data = json.loads(post_data)
@@ -46,7 +46,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         status_code, response = handler(controller, **match.groupdict())()
                     self._send_response(status_code, "application/json", json.dumps(response))  # type: ignore
                 except ValueError as error:
-                    self._send_response(400, "application/json", json.dumps({"error": str(error)}))
+                    self._send_response(404, "application/json", json.dumps({"error": str(error)}))
                 except Exception as error:
                     self._send_response(500, "application/json", json.dumps({"error": str(error)}))
                 return

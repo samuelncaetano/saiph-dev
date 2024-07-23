@@ -30,6 +30,15 @@ def get_users(controller: UserController):
     return handler
 
 
+@route("/users/<id>", "GET")
+def get_users_by_id(controller: UserController, id: int):  # pylint: disable = C0103, W0622
+    def handler():
+        users = controller.get_by_id(int(id))
+        return 200, users
+
+    return handler
+
+
 @route("/users", "POST")
 def post_user(controller: UserController, user_data: dict[str, Any]):
     def handler():
@@ -39,8 +48,8 @@ def post_user(controller: UserController, user_data: dict[str, Any]):
     return handler
 
 
-@route("/users/<id>", "PUT")
-def put_user(controller: UserController, id: int):  # pylint: disable = C0103, W0622
+@route("/users/<id>", "PATCH")
+def patch_user(controller: UserController, id: int):  # pylint: disable = C0103, W0622
     def handler(user_data: dict[str, Any]):
         user = controller.update_user(int(id), user_data)
         return 200, user
