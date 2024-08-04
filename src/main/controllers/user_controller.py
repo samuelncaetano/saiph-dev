@@ -13,6 +13,13 @@ class UserController:
         user = User(id=0, **user_data)
         return self.user_use_cases.create_user(user)
 
+    def login_user(self, login_data: dict[str, Any]) -> dict[str, Any]:
+        email = login_data.get("email")
+        password = login_data.get("password")
+        if not email or not password:
+            raise ValueError("Email and password are required")
+        return self.user_use_cases.login_user(email, password)
+
     def list_users(self) -> List[dict[str, Any]]:
         return self.user_use_cases.list_users()
 

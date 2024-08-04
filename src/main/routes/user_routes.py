@@ -42,6 +42,15 @@ def post_user(controller: UserController, user_data: dict[str, Any]):
     return handler
 
 
+@route("/users/login", "POST")
+def login_user(controller: UserController, login_data: dict[str, Any]):
+    def handler():
+        user = controller.login_user(login_data)
+        return 200, user
+
+    return handler
+
+
 @route("/users/<id>", "PATCH")
 def patch_user(controller: UserController, id: int):  # pylint: disable = C0103, W0622
     def handler(user_data: dict[str, Any]):

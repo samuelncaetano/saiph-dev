@@ -91,6 +91,20 @@ class TestController:
         # Assert
         assert created_user == user_data_assert
 
+    def test_create_user_email(self, user_controller: UserController, user_builder: User):
+        # Arrange
+        user_data_assert = user_to_pydantic(user_builder).model_dump()
+        user_data = user_data_assert.copy()
+        user_data_assert.update({"id": 1})
+        user_data.pop("id", None)
+
+        # Act
+        user_controller.create_user(user_data)  # type: ignore
+
+        # Assert
+        with pytest.raises(ValueError):
+            user_controller.create_user(user_data)  # type: ignore
+
     def test_list_users(self, user_controller: UserController):
         # Arrange
         users = [
@@ -124,6 +138,32 @@ class TestController:
         # Assert
         assert len(listed_users) == len(users)
         assert listed_users == created_users
+
+    def test_login_user(self, user_controller: UserController, user_builder: User):
+        # Arrange
+        user_data = user_to_pydantic(user_builder).model_dump()
+        user_data.pop("id", None)
+        login_data = {"email": user_data["email"], "password": user_data["password"]}
+
+        # Act
+        user_controller.create_user(user_data)  # type: ignore
+        logged_user = user_controller.login_user(login_data)  # type: ignore
+
+        # Assert
+        assert logged_user["email"] == login_data["email"]
+
+    def test_login_user_without_email_and_password(self, user_controller: UserController, user_builder: User):
+        # Arrange
+        user_data = user_to_pydantic(user_builder).model_dump()
+        user_data.pop("id", None)
+        login_data = {"email": "", "password": ""}
+
+        # Act
+        user_controller.create_user(user_data)  # type: ignore
+
+        # Assert
+        with pytest.raises(ValueError):
+            user_controller.login_user(login_data)
 
     def test_get_user_by_id(self, user_controller: UserController, user_builder: User):
         # Arrange

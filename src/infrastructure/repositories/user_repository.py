@@ -58,6 +58,20 @@ class UserRepository(JSONRepository):
         logger.warning(f"User not found: {user_id}")
         raise ValueError("User not found")
 
+    def get_by_email(self, email: str):
+        data = self.load_data()
+        data = list(map(pydantic_to_user, data))
+        for item in data:
+            if item.email == email:
+                return asdict(item)
+        return None
+
+    def validate_user(self, email: str, password: str):
+        user_data = self.get_by_email(email)
+        if user_data and user_data["password"] == password:
+            return user_data
+        return None
+
     def update(self, updated_user_data: dict[str, Any]) -> dict[str, Any]:
         logger.debug(f"Updating user: {updated_user_data}")
         data = self.load_data()

@@ -56,6 +56,23 @@ def test_integration_create_user(test_server):  # type: ignore
     assert created_user["age"] == 30
 
 
+def test_integration_login_user(test_server):  # type: ignore
+    url = f"{test_server}/users"
+    url_login = f"{test_server}/users/login"
+    user_data = {"name": "John Doe", "email": "johndoe@example.com", "password": "default", "age": 30}
+    login = {"email": "johndoe@example.com", "password": "default"}
+
+    requests.post(url, json=user_data)
+    response = requests.post(url_login, json=login)
+    created_user = response.json()
+
+    assert response.status_code == 200
+    assert created_user["name"] == "John Doe"
+    assert created_user["email"] == "johndoe@example.com"
+    assert created_user["password"] == "default"
+    assert created_user["age"] == 30
+
+
 def test_integration_list_users(test_server):  # type: ignore
     url = f"{test_server}/users"
     response = requests.get(url)

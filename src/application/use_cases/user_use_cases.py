@@ -10,7 +10,15 @@ class UserUseCases:
     repository: UserRepository
 
     def create_user(self, user: User) -> dict[str, Any]:
+        if self.repository.get_by_email(user.email):
+            raise ValueError("Email already registered")
         return self.repository.add(user)
+
+    def login_user(self, email: str, password: str) -> dict[str, Any]:
+        user = self.repository.validate_user(email, password)
+        if not user:
+            raise ValueError("Invalid email or password")
+        return user
 
     def list_users(self) -> List[dict[str, Any]]:
         return self.repository.get_all()
