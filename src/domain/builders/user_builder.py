@@ -12,6 +12,7 @@ class UserBuilder:
     name: str = ""
     email: str = ""
     age: int = 0
+    password: str = ""
 
     def with_id(self, id: int) -> Self:  # pylint: disable = C0103, W0622
         self.id = id
@@ -29,6 +30,10 @@ class UserBuilder:
         self.age = age
         return self
 
+    def with_password(self, password: str) -> Self:
+        self.password = password
+        return self
+
     def build(self) -> User:
-        user = User(id=self.id, name=self.name, email=self.email, age=self.age)
+        user = User(id=self.id, name=self.name, email=self.email, password=self.password, age=self.age)
         return user_schema(user)

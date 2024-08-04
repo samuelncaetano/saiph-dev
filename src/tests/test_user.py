@@ -14,7 +14,14 @@ from src.main.controllers.user_controller import UserController
 
 @pytest.fixture
 def user_builder():
-    return UserBuilder().with_name("John Doe").with_email("johndoe@example.com").with_age(0).build()
+    return (
+        UserBuilder()
+        .with_name("John Doe")
+        .with_email("johndoe@example.com")
+        .with_password("default")
+        .with_age(0)
+        .build()
+    )
 
 
 @pytest.fixture
@@ -50,15 +57,16 @@ class TestUser:
         assert user_builder.age == user_builder.get_age()
 
     @pytest.mark.parametrize(
-        "name, email, expected_error_field",
+        "name, email, password, expected_error_field",
         [
-            ("", "johndoe@example.com", "name"),
-            ("John", "", "email"),
+            ("", "johndoe@example.com", "default", "name"),
+            ("John", "", "default", "email"),
+            ("John", "johndoe@example.com", "", "password"),
         ],
     )
-    def test_user_model_validation_errors(self, name: str, email: str, expected_error_field: str):
+    def test_user_model_validation_errors(self, name: str, email: str, password: str, expected_error_field: str):
         with pytest.raises(ValidationError) as exc_info:
-            UserBuilder().with_name(name).with_email(email).with_age(0).build()
+            UserBuilder().with_name(name).with_email(email).with_password(password).with_age(0).build()
         assert f"O campo '{expected_error_field}' deve ter pelo menos 3 caracteres" in str(
             exc_info.value  # type: ignore
         )
@@ -86,8 +94,20 @@ class TestController:
     def test_list_users(self, user_controller: UserController):
         # Arrange
         users = [
-            UserBuilder().with_id(1).with_name("John Doe").with_email("johndoe@example.com").with_age(30).build(),
-            UserBuilder().with_id(2).with_name("Jane Doe").with_email("janedoe@example.com").with_age(25).build(),
+            UserBuilder()
+            .with_id(1)
+            .with_name("John Doe")
+            .with_email("johndoe@example.com")
+            .with_password("default")
+            .with_age(30)
+            .build(),
+            UserBuilder()
+            .with_id(2)
+            .with_name("Jane Doe")
+            .with_email("janedoe@example.com")
+            .with_password("default")
+            .with_age(25)
+            .build(),
         ]
         pydantic_users = list(map(user_to_pydantic, users))
         user_data_list = [user.model_dump() for user in pydantic_users]

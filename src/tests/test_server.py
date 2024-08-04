@@ -44,7 +44,7 @@ def test_server(tmpdir_factory):  # type: ignore
 
 def test_integration_create_user(test_server):  # type: ignore
     url = f"{test_server}/users"
-    user_data = {"name": "John Doe", "email": "johndoe@example.com", "age": 30}
+    user_data = {"name": "John Doe", "email": "johndoe@example.com", "password": "default", "age": 30}
 
     response = requests.post(url, json=user_data)
     created_user = response.json()
@@ -52,6 +52,7 @@ def test_integration_create_user(test_server):  # type: ignore
     assert response.status_code == 201
     assert created_user["name"] == "John Doe"
     assert created_user["email"] == "johndoe@example.com"
+    assert created_user["password"] == "default"
     assert created_user["age"] == 30
 
 
@@ -67,7 +68,7 @@ def test_integration_list_users(test_server):  # type: ignore
 
 def test_integration_get_user_by_id(test_server):  # type: ignore
     url = f"{test_server}/users"
-    user_data = {"name": "Jane Doe", "email": "janedoe@example.com", "age": 25}
+    user_data = {"name": "Jane Doe", "email": "janedoe@example.com", "password": "default", "age": 25}
 
     response_post = requests.post(url, json=user_data)
     created_user = response_post.json()
@@ -80,13 +81,14 @@ def test_integration_get_user_by_id(test_server):  # type: ignore
     assert fetched_user["id"] == user_id
     assert fetched_user["name"] == "Jane Doe"
     assert fetched_user["email"] == "janedoe@example.com"
+    assert fetched_user["password"] == "default"
     assert fetched_user["age"] == 25
 
 
 def test_integration_update_user(test_server):  # type: ignore
     url = f"{test_server}/users"
-    user_data = {"name": "Jane Smith", "email": "janesmith@example.com", "age": 28}
-    update_data = {"name": "Jane Doe", "email": "janedoe@example.com", "age": 29}
+    user_data = {"name": "Jane Smith", "email": "janesmith@example.com", "password": "default", "age": 28}
+    update_data = {"name": "Jane Doe", "email": "janedoe@example.com", "password": "default", "age": 29}
 
     response_post = requests.post(url, json=user_data)
     created_user = response_post.json()
@@ -99,12 +101,13 @@ def test_integration_update_user(test_server):  # type: ignore
     assert updated_user["id"] == user_id
     assert updated_user["name"] == "Jane Doe"
     assert updated_user["email"] == "janedoe@example.com"
+    assert updated_user["password"] == "default"
     assert updated_user["age"] == 29
 
 
 def test_integration_delete_user(test_server):  # type: ignore
     url = f"{test_server}/users"
-    user_data = {"name": "Jim Doe", "email": "jimdoe@example.com", "age": 35}
+    user_data = {"name": "Jim Doe", "email": "jimdoe@example.com", "password": "default", "age": 35}
 
     response_post = requests.post(url, json=user_data)
     created_user = response_post.json()

@@ -9,6 +9,7 @@ class User:
     id: int  # pylint: disable = C0103
     name: str
     email: str
+    password: str
     age: int
 
     def get_name(self):
@@ -25,9 +26,10 @@ class UserModel(BaseModel):  # type: ignore
     id: int
     name: str
     email: str
+    password: str
     age: int
 
-    @field_validator("name", "email", mode="before")
+    @field_validator("name", "email", "password", mode="before")
     def not_empty(cls, value: str, field: Any) -> str:
         if len(value) < 3:
             raise ValueError(f"O campo '{field.field_name}' deve ter pelo menos 3 caracteres")
