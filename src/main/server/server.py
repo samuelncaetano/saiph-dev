@@ -45,7 +45,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def get_command(self, handler, match, controller):  # type: ignore
         logger.debug(f"Executing GET command: handler={handler}, match={match.groupdict()}, controller={controller}")
-        status_code, response = handler(controller, **match.groupdict())()
+        status_code, response = handler(self, controller, **match.groupdict())()
         return status_code, response
 
     def post_command(self, handler, controller):  # type: ignore
@@ -53,7 +53,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length).decode("utf-8")
         request_data = json.loads(post_data)
         logger.debug(f"Executing POST command: handler={handler}, request_data={request_data}, controller={controller}")
-        status_code, response = handler(controller, request_data)()
+        status_code, response = handler(self, controller, request_data)()
         return status_code, response
 
     def put_command(self, handler, match, controller):  # type: ignore
@@ -63,7 +63,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         logger.debug(
             f"Executing PUT command: handler={handler}, match={match.groupdict()}, request_data={request_data}, controller={controller}"  # pylint: disable = C0301   # noqa: E501
         )
-        status_code, response = handler(controller, **match.groupdict())(request_data)
+        status_code, response = handler(self, controller, **match.groupdict())(request_data)
         return status_code, response
 
     def patch_command(self, handler, match, controller):  # type: ignore
@@ -73,12 +73,12 @@ class RequestHandler(BaseHTTPRequestHandler):
         logger.debug(
             f"Executing PATCH command: handler={handler}, match={match.groupdict()}, request_data={request_data}, controller={controller}"  # pylint: disable = C0301   # noqa: E501
         )
-        status_code, response = handler(controller, **match.groupdict())(request_data)
+        status_code, response = handler(self, controller, **match.groupdict())(request_data)
         return status_code, response
 
     def delete_command(self, handler, match, controller):  # type: ignore
         logger.debug(f"Executing DELETE command: handler={handler}, match={match.groupdict()}, controller={controller}")
-        status_code, response = handler(controller, **match.groupdict())()
+        status_code, response = handler(self, controller, **match.groupdict())()
         return status_code, response
 
     def _handle_request(self, method: str):
@@ -106,7 +106,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self._send_response(status_code, "application/json", json.dumps(response))  # type: ignore
                 except ValueError as error:
                     logger.error(f"ValueError: {error}")
-                    self._send_response(404, "application/json", json.dumps({"error": str(error)}))
+                    self._send_response(400, "application/json", json.dumps({"error": str(error)}))
                 except Exception as error:
                     logger.error(f"Unhandled exception: {error}")
                     self._send_response(500, "application/json", json.dumps({"error": str(error)}))

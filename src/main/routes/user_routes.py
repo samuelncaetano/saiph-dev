@@ -2,21 +2,32 @@ import re
 from typing import Any
 
 from src.main.controllers.user_controller import UserController
+from src.main.middlewares.session_middleware import session_middleware
 
 routes = []
 
 
-def route(path: str, method: str):
+def apply_middlewares(handler, middlewares):  # type: ignore
+    for middleware in middlewares:
+        handler = middleware(handler)
+    return handler
+
+
+def route(path: str, method: str, middlewares=None):  # type: ignore
+    if middlewares is None:
+        middlewares = []
+
     def decorator(func):  # type: ignore
         pattern = re.compile(re.sub(r"<(\w+)>", r"(?P<\1>\\d+)", path))
-        routes.append((pattern, method, func))
-        return func
+        wrapped_func = apply_middlewares(func, middlewares)  # type: ignore
+        routes.append((pattern, method, wrapped_func))
+        return wrapped_func
 
     return decorator
 
 
 @route("/users", "GET")
-def get_users(controller: UserController):
+def get_users(request, controller: UserController):  # pylint: disable = W0613   # type: ignore
     def handler():
         users = controller.list_users()
         return 200, users
@@ -25,7 +36,9 @@ def get_users(controller: UserController):
 
 
 @route("/users/<id>", "GET")
-def get_users_by_id(controller: UserController, id: int):  # pylint: disable = C0103, W0622
+def get_users_by_id(
+    request, controller: UserController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
+):
     def handler():
         user = controller.get_by_id(int(id))
         return 200, user
@@ -33,8 +46,10 @@ def get_users_by_id(controller: UserController, id: int):  # pylint: disable = C
     return handler
 
 
-@route("/users", "POST")
-def post_user(controller: UserController, user_data: dict[str, Any]):
+@route("/users", "POST", middlewares=[session_middleware])
+def post_user(
+    request, controller: UserController, user_data: dict[str, Any]  # pylint: disable = W0613  # type: ignore
+):
     def handler():
         user = controller.create_user(user_data)
         return 201, user
@@ -42,8 +57,10 @@ def post_user(controller: UserController, user_data: dict[str, Any]):
     return handler
 
 
-@route("/users/login", "POST")
-def login_user(controller: UserController, login_data: dict[str, Any]):
+@route("/users/login", "POST", middlewares=[session_middleware])
+def login_user(
+    request, controller: UserController, login_data: dict[str, Any]  # pylint: disable = W0613   # type: ignore
+):
     def handler():
         user = controller.login_user(login_data)
         return 200, user
@@ -52,7 +69,7 @@ def login_user(controller: UserController, login_data: dict[str, Any]):
 
 
 @route("/users/<id>", "PATCH")
-def patch_user(controller: UserController, id: int):  # pylint: disable = C0103, W0622
+def patch_user(request, controller: UserController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
     def handler(user_data: dict[str, Any]):
         user = controller.update_user(int(id), user_data)
         return 200, user
@@ -61,7 +78,7 @@ def patch_user(controller: UserController, id: int):  # pylint: disable = C0103,
 
 
 @route("/users/<id>", "DELETE")
-def delete_user(controller: UserController, id: int):  # pylint: disable = C0103, W0622
+def delete_user(request, controller: UserController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
     def handler():
         users = controller.delete_user(int(id))
         return 200, users
