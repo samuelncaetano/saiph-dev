@@ -6,14 +6,6 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any
 
-# Configuração básica do logging
-logging.basicConfig(
-    level=logging.INFO,  # Nível de log
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Formato da mensagem
-    datefmt="%Y-%m-%d %H:%M:%S",  # Formato da data
-    handlers=[logging.FileHandler("logs.txt"), logging.StreamHandler()],  # Log para um arquivo  # Log para o console
-)
-
 # Criar um logger
 logger = logging.getLogger(__name__)
 
