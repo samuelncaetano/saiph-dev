@@ -24,8 +24,19 @@ class RequestHandler(BaseHTTPRequestHandler):
         logger.debug(f"Sending response: status_code={status_code}, content_type={content_type}")
         self.send_response(status_code)
         self.send_header("Content-type", content_type)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Session-ID")
         self.end_headers()
         self.wfile.write(data.encode("utf-8"))
+
+    def do_OPTIONS(self):  # pylint: disable = C0103
+        logger.debug(f"Handling OPTIONS request: path={self.path}")
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Session-ID")
+        self.end_headers()
 
     def do_GET(self):  # pylint: disable = C0103
         logger.debug(f"Handling GET request: path={self.path}")
