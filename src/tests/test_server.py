@@ -7,16 +7,17 @@ import pytest  # type: ignore
 import requests  # type: ignore
 
 from src.domain.entities.user import User
-from src.main.config.config import configure_user_dependencies
+from src.main.config.config import configure_book_dependencies, configure_user_dependencies
 from src.main.routes.index import register_routes
 from src.main.server.server import RequestHandler
 
 
 # Função para iniciar o servidor em uma thread separada
-def start_server(port: int, db_path: str):
+def start_server(port: int, db_path_user: str, db_path_book: str):
     server_address = ("", port)
-    user_controller = configure_user_dependencies(db_path)
-    register_routes(user_controller)
+    user_controller = configure_user_dependencies(db_path_user)
+    book_controller = configure_book_dependencies(db_path_book)
+    register_routes(user_controller, book_controller)
     httpd = HTTPServer(server_address, RequestHandler)
     httpd.serve_forever()
 
@@ -24,11 +25,12 @@ def start_server(port: int, db_path: str):
 @pytest.fixture(scope="module")
 def test_server(tmpdir_factory):  # type: ignore
     temp_dir = tmpdir_factory.mktemp("data")
-    db_path = Path(temp_dir) / "users.json"  # type: ignore
+    db_path_user = Path(temp_dir) / "users.json"  # type: ignore
+    db_path_book = Path(temp_dir) / "books.json"  # type: ignore
     port = 8081
 
     # Inicializar servidor em thread separada
-    server_thread = threading.Thread(target=start_server, args=(port, db_path))
+    server_thread = threading.Thread(target=start_server, args=(port, db_path_user, db_path_book))
     server_thread.daemon = True
     server_thread.start()
 
