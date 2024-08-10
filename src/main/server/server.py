@@ -2,7 +2,7 @@ import json
 import logging
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from src.main.config.config import configure_user_dependencies
+from src.main.config.config import configure_book_dependencies, configure_user_dependencies
 from src.main.routes.index import all_routes, register_routes
 
 # Configuração básica do logging
@@ -131,11 +131,13 @@ def run(
     handler_class: type[RequestHandler] = RequestHandler,
     port: int = 8080,
     db_path_user: str = "database/users.json",
+    db_path_book: str = "database/books.json",
 ):
     logger.debug("Configuring user dependencies")
     user_controller = configure_user_dependencies(db_path_user)
+    book_controller = configure_book_dependencies(db_path_book)
+    register_routes(user_controller, book_controller)
     logger.debug("Registering routes")
-    register_routes(user_controller)
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
     print(f"Starting HTTP server on port {port}...")
