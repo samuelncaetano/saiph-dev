@@ -72,3 +72,27 @@ class BookRepository(JSONRepository):
         else:
             logger.warning(f"No books found for user ID: {user_id}")
             raise ValueError("No books found for the given user ID")
+
+    def update(self, updated_book_data: dict[str, Any]) -> dict[str, Any]:
+        logger.debug(f"Updating book: {updated_book_data}")
+        data = self.load_data()
+        book_model = BookModel(**updated_book_data)
+        for idx, item in enumerate(data):
+            if item.id == book_model.id:
+                data[idx] = book_model
+                self.save_data(data)
+                logger.info(f"book updated: {book_model.model_dump()}")
+                return book_model.model_dump()
+        logger.warning(f"Book not found for update: {book_model.id}")
+        raise ValueError("Book not found")
+
+    def delete(self, book_id: int) -> List[dict[str, Any]]:
+        logger.debug(f"Deleting book by ID: {book_id}")
+        data = self.load_data()
+        for idx, item in enumerate(data):
+            if item.id == book_id:
+                del data[idx]
+                self.save_data(data)
+                return self.get_all()
+        logger.warning(f"Book not found for deletion: {book_id}")
+        raise ValueError("Book not found")
