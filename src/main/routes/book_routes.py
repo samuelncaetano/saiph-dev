@@ -67,5 +67,23 @@ def post_book(
     return handler
 
 
+@route("/books/<id>", "PATCH")
+def patch_book(request, controller: BookController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
+    def handler(book_data: dict[str, Any]):
+        book = controller.update_book(int(id), book_data)
+        return 200, book
+
+    return handler
+
+
+@route("/books/<id>", "DELETE")
+def delete_book(request, controller: BookController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
+    def handler():
+        books = controller.delete_book(int(id))
+        return 200, books
+
+    return handler
+
+
 def get_books_routes():
     return sorted(routes, key=lambda route: len(route[0].pattern), reverse=True)  # type: ignore
