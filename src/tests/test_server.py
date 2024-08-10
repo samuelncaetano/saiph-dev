@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest  # type: ignore
 import requests  # type: ignore
 
+from src.domain.entities.book import Book
 from src.domain.entities.user import User
 from src.main.config.config import configure_book_dependencies, configure_user_dependencies
 from src.main.routes.index import register_routes
@@ -189,3 +190,52 @@ class TestDeleteUserServer:
 
         response_invalided = requests.get(f"{url}/{user_id}")
         assert response_invalided.status_code == 400
+
+
+class TestCreateBookServer:
+    def test_create_book(self, test_server):  # type: ignore
+        url = f"{test_server}/books"
+        book_data = {"title": "1984", "user_id": 1}
+
+        response = requests.post(url, json=book_data)
+        created_book = response.json()
+
+        assert response.status_code == 201
+        assert created_book.get("title") == book_data.get("title")
+        assert created_book.get("user_id") == book_data.get("user_id")
+
+
+class TestGetBookServer:
+    def test_get_all_books(self, test_server):  # type: ignore
+        url = f"{test_server}/books"
+        response_get = requests.get(url)
+        fetched_book: list[Book] = response_get.json()
+
+        assert response_get.status_code == 200
+        assert isinstance(fetched_book, list)
+        assert len(fetched_book) > 0
+
+    def test_get_book_by_id(self, test_server):  # type: ignore
+        url = f"{test_server}/books"
+        book_data = {"title": "1984", "user_id": 1}
+
+        response_post = requests.post(url, json=book_data)
+        created_book = response_post.json()
+        book_id = created_book["id"]
+
+        response_get = requests.get(f"{url}/{book_id}")
+        fetched_book = response_get.json()
+
+        assert response_get.status_code == 200
+        assert fetched_book.get("title") == book_data.get("title")
+        assert fetched_book.get("user_id") == book_data.get("user_id")
+
+    def test_get_book_by_user_id(self, test_server):  # type: ignore
+        url = f"{test_server}/books/user"
+
+        response_get = requests.get(f"{url}/{1}")
+        fetched_book: list[Book] = response_get.json()
+
+        assert response_get.status_code == 200
+        assert isinstance(fetched_book, list)
+        assert len(fetched_book) > 0
