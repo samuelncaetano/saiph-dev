@@ -17,3 +17,15 @@ Content-Type: application/json
 ###
 GET http://localhost:8080/books/user/
 Content-Type: application/json
+
+###
+PATCH http://localhost:8080/books/3
+Content-Type: application/json
+
+{
+    "title": "Admiravel Mundo Novo"
+}
+
+###
+DELETE http://localhost:8080/books/2
+Content-Type: application/json
