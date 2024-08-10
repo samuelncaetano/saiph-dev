@@ -25,6 +25,37 @@ def route(path: str, method: str, middlewares=None):  # type: ignore
     return decorator
 
 
+@route("/books", "GET")
+def get_all_books(request, controller: BookController):  # pylint: disable = W0613   # type: ignore
+    def handler():
+        books = controller.list_books()
+        return 200, books
+
+    return handler
+
+
+@route("/books/<id>", "GET")
+def get_books_by_id(
+    request, controller: BookController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
+):
+    def handler():
+        book = controller.get_by_id(int(id))
+        return 200, book
+
+    return handler
+
+
+@route("/books/user/<id>", "GET")
+def get_books_by_user_id(
+    request, controller: BookController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
+):
+    def handler():
+        book = controller.get_by_user_id(int(id))
+        return 200, book
+
+    return handler
+
+
 @route("/books", "POST")
 def post_book(
     request, controller: BookController, book_data: dict[str, Any]  # pylint: disable = W0613  # type: ignore

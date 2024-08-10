@@ -5,3 +5,15 @@ Content-Type: application/json
     "title": "1984",
     "user_id": 1
 }
+
+###
+GET http://localhost:8080/books
+Content-Type: application/json
+
+###
+GET http://localhost:8080/books/
+Content-Type: application/json
+
+###
+GET http://localhost:8080/books/user/
+Content-Type: application/json
