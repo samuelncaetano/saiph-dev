@@ -239,3 +239,36 @@ class TestGetBookServer:
         assert response_get.status_code == 200
         assert isinstance(fetched_book, list)
         assert len(fetched_book) > 0
+
+
+class TestUpdateBookServer:
+    def test_update_book(self, test_server):  # type: ignore
+        url = f"{test_server}/books"
+        book_data = {"title": "1984", "user_id": 1}
+        update_data = {"title": "Admirável Mundo Novo"}
+
+        response_post = requests.post(url, json=book_data)
+        created_book = response_post.json()
+        book_id = created_book["id"]
+
+        response_patch = requests.patch(f"{url}/{book_id}", json=update_data)
+        updated_book = response_patch.json()
+
+        assert response_patch.status_code == 200
+        assert updated_book.get("title") == update_data.get("title")
+
+
+class TestDeleteBookServer:
+    def test_delete_book(self, test_server):  # type: ignore
+        url = f"{test_server}/books"
+        book_data = {"title": "1984", "user_id": 1}
+
+        response_post = requests.post(url, json=book_data)
+        created_book = response_post.json()
+        book_id = created_book["id"]
+
+        response_delete = requests.delete(f"{url}/{book_id}")
+        assert response_delete.status_code == 200
+
+        response_invalided = requests.get(f"{url}/{book_id}")
+        assert response_invalided.status_code == 400

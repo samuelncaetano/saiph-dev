@@ -65,7 +65,7 @@ class TestUser:
         ],
     )
     def test_user_model_validation_errors(self, name: str, email: str, password: str, expected_error_field: str):
-        with pytest.raises(ValidationError) as exc_info:
+        with pytest.raises(ValidationError) as exc_info:  # type: ignore
             UserBuilder().with_name(name).with_email(email).with_password(password).with_age(0).build()
         assert f"O campo '{expected_error_field}' deve ter pelo menos 3 caracteres" in str(
             exc_info.value  # type: ignore

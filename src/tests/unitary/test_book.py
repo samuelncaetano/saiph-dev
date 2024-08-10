@@ -72,11 +72,11 @@ class TestBook:
         assert book_builder.user_id == book_builder.get_user_id()
 
     def test_create_an_untitled_book(self):
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError):  # type: ignore
             BookBuilder().with_user_id(1).build()
 
     def test_create_a_book_without_user_id(self):
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError):  # type: ignore
             return BookBuilder().with_title("1984").build()
 
 
@@ -131,6 +131,34 @@ class TestController:
         # Assert
         assert len(listed_books) == len(books)
         assert listed_books == books
+
+    def test_update_book(self, book_controller: BookController, book_builder: Book):
+        # Arrange
+        update_data = {"title": "Admirável Mundo Novo"}
+        book_data = book_to_pydantic(book_builder).model_dump()
+        book_data.pop("id", None)
+
+        # Act
+        created_book = book_controller.create_book(book_data)  # type: ignore
+        book_id = created_book["id"]
+        updated_book = book_controller.update_book(book_id, update_data)
+
+        # Assert
+        assert updated_book.get("title") == update_data.get("title")
+
+    def test_delete_book(self, book_controller: BookController, book_builder: Book):
+        # Arrange
+        book_data = book_to_pydantic(book_builder).model_dump()
+        book_data.pop("id", None)
+
+        # Act
+        created_book = book_controller.create_book(book_data)  # type: ignore
+        book_id = created_book["id"]
+        book_controller.delete_book(book_id)
+
+        # Assert
+        with pytest.raises(ValueError):
+            book_controller.get_by_id(book_id)
 
 
 if __name__ == "__main__":
