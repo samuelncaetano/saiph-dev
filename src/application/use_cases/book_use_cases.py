@@ -20,3 +20,9 @@ class BookUseCases:
 
     def get_by_user_id(self, user_id: int) -> List[dict[str, Any]]:
         return self.repository.get_by_user_id(user_id)
+
+    def update_book(self, book: dict[str, Any]) -> dict[str, Any]:
+        return self.repository.update(book)
+
+    def delete_book(self, book_id: int) -> List[dict[str, Any]]:
+        return self.repository.delete(book_id)
