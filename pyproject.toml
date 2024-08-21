@@ -18,7 +18,7 @@ extend-ignore = ["E722", "W503"]
 per-file-ignores = ["__init__.py: F401, F403"]
 
 [tool.coverage.run]
-source = ["src"]
+source = ["backend"]
 
 [tool.coverage.report]
 show_missing = true
@@ -29,8 +29,8 @@ omit = ["*/__init__.py", "*/tests/*"]
 [tool.pyright]
 venvPath = ".venv"
 pythonVersion = "3.10"
-include = ["src/**/*.py"]
-exclude = ["src/**/__init__.py", "tests/**/*.py"]
+include = ["backend/**/*.py"]
+exclude = ["backend/**/__init__.py", "tests/**/*.py"]
 reportMissingTypeStubs = true
 typeCheckingMode = "strict"
 reportCallIssue = "none"
