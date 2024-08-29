@@ -1,8 +1,7 @@
 from typing import Any, List
 
-from backend.application.services.book_schema import book_to_pydantic, pydantic_to_book
 from backend.application.use_cases.book_use_cases import BookUseCases
-from backend.domain.entities.book import Book, BookModel
+from backend.domain.entities.book import Book
 
 
 class BookController:
@@ -23,14 +22,7 @@ class BookController:
         return self.book_use_case.get_by_user_id(user_id)
 
     def update_book(self, book_id: int, book_data: dict[str, Any]) -> dict[str, Any]:
-        book_dict = self.get_by_id(book_id)
-        book = pydantic_to_book(BookModel(**book_dict))
-        for key, value in book_data.items():
-            setattr(book, key, value)
-
-        book_dict_pydantic = book_to_pydantic(book).model_dump()
-        updated_book = self.book_use_case.update_book(book_dict_pydantic)  # type: ignore
-        return updated_book
+        return self.book_use_case.update_book(book_id, book_data)
 
     def toggle_book_status(self, book_id: int) -> dict[str, Any]:
         return self.book_use_case.toggle_book_status(book_id)
