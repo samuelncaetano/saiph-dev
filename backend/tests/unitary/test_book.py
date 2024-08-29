@@ -149,6 +149,28 @@ class TestController:
         # Assert
         assert updated_book.get("title") == update_data.get("title")
 
+    def test_toggle_book_status(self, book_controller: BookController, book_builder: Book):
+        # Arrange
+        book_data = book_to_pydantic(book_builder).model_dump()
+        book_data.pop("id", None)
+        created_book = book_controller.create_book(book_data)  # type: ignore
+        book_id = created_book["id"]
+
+        # Act
+        initial_status = created_book["status"]
+        updated_book = book_controller.toggle_book_status(book_id)
+        toggled_status = updated_book["status"]
+
+        # Assert
+        assert toggled_status == (not initial_status)
+
+        # Act
+        updated_book = book_controller.toggle_book_status(book_id)
+        reverted_status = updated_book["status"]
+
+        # Assert
+        assert reverted_status == initial_status
+
     def test_delete_book(self, book_controller: BookController, book_builder: Book):
         # Arrange
         book_data = book_to_pydantic(book_builder).model_dump()
