@@ -26,8 +26,8 @@ class UserUseCases:
     def get_by_id(self, user_id: int) -> dict[str, Any]:
         return self.repository.get_by_id(user_id)
 
-    def update_user(self, user: dict[str, Any]) -> dict[str, Any]:
-        return self.repository.update(user)
+    def update_user(self, user_id: int, user_data: dict[str, Any]) -> dict[str, Any]:
+        return self.repository.update(user_id, user_data)
 
     def delete_user(self, user_id: int) -> List[dict[str, Any]]:
         return self.repository.delete(user_id)

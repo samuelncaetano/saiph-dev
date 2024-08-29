@@ -1,8 +1,7 @@
 from typing import Any, List
 
-from backend.application.services.user_schema import pydantic_to_user, user_to_pydantic
 from backend.application.use_cases.user_use_cases import UserUseCases
-from backend.domain.entities.user import User, UserModel
+from backend.domain.entities.user import User
 
 
 class UserController:
@@ -27,14 +26,7 @@ class UserController:
         return self.user_use_cases.get_by_id(user_id)
 
     def update_user(self, user_id: int, user_data: dict[str, Any]) -> dict[str, Any]:
-        user_dict = self.get_by_id(user_id)
-        user = pydantic_to_user(UserModel(**user_dict))
-        for key, value in user_data.items():
-            setattr(user, key, value)
-
-        user_dict_pydantic = user_to_pydantic(user).model_dump()
-        updated_user = self.user_use_cases.update_user(user_dict_pydantic)  # type: ignore
-        return updated_user
+        return self.user_use_cases.update_user(user_id, user_data)
 
     def delete_user(self, user_id: int) -> List[dict[str, Any]]:
         return self.user_use_cases.delete_user(user_id)

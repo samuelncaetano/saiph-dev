@@ -72,17 +72,21 @@ class UserRepository(JSONRepository):
             return user_data
         return None
 
-    def update(self, updated_user_data: dict[str, Any]) -> dict[str, Any]:
+    def update(self, user_id: int, updated_user_data: dict[str, Any]) -> dict[str, Any]:
         logger.debug(f"Updating user: {updated_user_data}")
         data = self.load_data()
-        user_model = UserModel(**updated_user_data)
-        for idx, item in enumerate(data):
-            if item.id == user_model.id:
-                data[idx] = user_model
+
+        for idx, item in enumerate(data):  # pylint: disable = W0612  # type: ignore
+            if item.id == user_id:
+                for key, value in updated_user_data.items():
+                    setattr(item, key, value)
+
                 self.save_data(data)
-                logger.info(f"User updated: {user_model.model_dump()}")
-                return user_model.model_dump()
-        logger.warning(f"User not found for update: {user_model.id}")
+
+                logger.info(f"User updated: {item.model_dump()}")
+                return item.model_dump()
+
+        logger.warning(f"User not found for update: {user_id}")
         raise ValueError("User not found")
 
     def delete(self, user_id: int) -> List[dict[str, Any]]:
