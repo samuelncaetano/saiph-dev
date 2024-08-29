@@ -3,8 +3,7 @@ Content-Type: application/json
 
 {
     "title": "1984",
-    "user_id": 1,
-    "status": "false"
+    "user_id": 1
 }
 
 ###
@@ -20,7 +19,7 @@ GET http://localhost:8080/books/user/
 Content-Type: application/json
 
 ###
-PATCH http://localhost:8080/books/3
+PATCH http://localhost:8080/books/
 Content-Type: application/json
 
 {
@@ -28,12 +27,12 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:8080/books/toggle-status/1
+PATCH http://localhost:8080/books/toggle-status/
 Content-Type: application/json
 
 {
 }
 
 ###
-DELETE http://localhost:8080/books/2
+DELETE http://localhost:8080/books/
 Content-Type: application/json
