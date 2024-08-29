@@ -9,6 +9,7 @@ class Book:
     id: int  # pylint: disable = C0103
     title: str
     user_id: int
+    status: bool
 
     def get_title(self):
         return self.title
@@ -16,11 +17,15 @@ class Book:
     def get_user_id(self):
         return self.user_id
 
+    def get_status(self):
+        return self.status
+
 
 class BookModel(BaseModel):  # type: ignore
     id: int  # pylint: disable = C0103
     title: str
     user_id: int
+    status: bool
 
     @field_validator("title", mode="before")
     def title_not_empty(cls, value: str, field: Any) -> str:

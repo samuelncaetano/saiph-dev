@@ -14,7 +14,7 @@ from backend.main.controllers.book_controller import BookController
 
 @pytest.fixture
 def book_builder():
-    return BookBuilder().with_title("1984").with_user_id(1).build()
+    return BookBuilder().with_title("1984").with_user_id(1).with_status(True).build()
 
 
 @pytest.fixture
@@ -44,10 +44,10 @@ def book_controller(book_use_cases: BookUseCases):
 def book_list(book_controller: BookController):
     # Arrange
     books = [
-        BookBuilder().with_title("1984").with_user_id(1).build(),
-        BookBuilder().with_title("1984").with_user_id(1).build(),
-        BookBuilder().with_title("1984").with_user_id(2).build(),
-        BookBuilder().with_title("1984").with_user_id(2).build(),
+        BookBuilder().with_title("1984").with_user_id(1).with_status(True).build(),
+        BookBuilder().with_title("1984").with_user_id(1).with_status(False).build(),
+        BookBuilder().with_title("1984").with_user_id(2).with_status(True).build(),
+        BookBuilder().with_title("1984").with_user_id(2).with_status(False).build(),
     ]
     pydantic_books = list(map(book_to_pydantic, books))
     book_data_list = [book.model_dump() for book in pydantic_books]
@@ -123,7 +123,10 @@ class TestController:
     def test_get_book_by_user_id(self, book_controller: BookController, book_list: list[Book], book_builder: Book):
         # Arrange
         user_id: int = book_builder.get_user_id()
-        books = [{"id": 1, "title": "1984", "user_id": user_id}, {"id": 2, "title": "1984", "user_id": user_id}]
+        books = [
+            {"id": 1, "title": "1984", "user_id": user_id, "status": True},
+            {"id": 2, "title": "1984", "user_id": user_id, "status": False},
+        ]
 
         # Act
         listed_books = book_controller.get_by_user_id(user_id)

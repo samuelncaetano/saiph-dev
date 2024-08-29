@@ -195,7 +195,7 @@ class TestDeleteUserServer:
 class TestCreateBookServer:
     def test_create_book(self, test_server):  # type: ignore
         url = f"{test_server}/books"
-        book_data = {"title": "1984", "user_id": 1}
+        book_data = {"title": "1984", "user_id": 1, "status": True}
 
         response = requests.post(url, json=book_data)
         created_book = response.json()
@@ -203,6 +203,7 @@ class TestCreateBookServer:
         assert response.status_code == 201
         assert created_book.get("title") == book_data.get("title")
         assert created_book.get("user_id") == book_data.get("user_id")
+        assert created_book.get("status") == book_data.get("status")
 
 
 class TestGetBookServer:
@@ -217,7 +218,7 @@ class TestGetBookServer:
 
     def test_get_book_by_id(self, test_server):  # type: ignore
         url = f"{test_server}/books"
-        book_data = {"title": "1984", "user_id": 1}
+        book_data = {"title": "1984", "user_id": 1, "status": True}
 
         response_post = requests.post(url, json=book_data)
         created_book = response_post.json()
@@ -244,8 +245,8 @@ class TestGetBookServer:
 class TestUpdateBookServer:
     def test_update_book(self, test_server):  # type: ignore
         url = f"{test_server}/books"
-        book_data = {"title": "1984", "user_id": 1}
-        update_data = {"title": "Admirável Mundo Novo"}
+        book_data = {"title": "1984", "user_id": 1, "status": True}
+        update_data = {"title": "Admirável Mundo Novo", "status": False}
 
         response_post = requests.post(url, json=book_data)
         created_book = response_post.json()
@@ -256,12 +257,13 @@ class TestUpdateBookServer:
 
         assert response_patch.status_code == 200
         assert updated_book.get("title") == update_data.get("title")
+        assert updated_book.get("status") == update_data.get("status")
 
 
 class TestDeleteBookServer:
     def test_delete_book(self, test_server):  # type: ignore
         url = f"{test_server}/books"
-        book_data = {"title": "1984", "user_id": 1}
+        book_data = {"title": "1984", "user_id": 1, "status": True}
 
         response_post = requests.post(url, json=book_data)
         created_book = response_post.json()
