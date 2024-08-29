@@ -259,6 +259,21 @@ class TestUpdateBookServer:
         assert updated_book.get("title") == update_data.get("title")
         assert updated_book.get("status") == update_data.get("status")
 
+    def test_toggle_book_status(self, test_server):  # type: ignore
+        url = f"{test_server}/books"
+        book_data = {"title": "1984", "user_id": 1, "status": False}
+        initial_status = book_data["status"]
+
+        response_post = requests.post(url, json=book_data)
+        created_book = response_post.json()
+        book_id = created_book["id"]
+
+        response_patch = requests.patch(f"{url}/toggle-status/{book_id}", json={})
+        updated_book = response_patch.json()
+
+        assert response_patch.status_code == 200
+        assert updated_book.get("status") == (not initial_status)
+
 
 class TestDeleteBookServer:
     def test_delete_book(self, test_server):  # type: ignore
