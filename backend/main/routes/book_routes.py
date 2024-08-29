@@ -76,6 +76,17 @@ def patch_book(request, controller: BookController, id: int):  # pylint: disable
     return handler
 
 
+@route("/books/toggle-status/<id>", "PATCH")
+def toggle_book_status(
+    request, controller: BookController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
+):
+    def handler(*args, **kwargs):  # pylint: disable = W0613   # type: ignore
+        book = controller.toggle_book_status(int(id))
+        return 200, book
+
+    return handler
+
+
 @route("/books/<id>", "DELETE")
 def delete_book(request, controller: BookController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
     def handler():
