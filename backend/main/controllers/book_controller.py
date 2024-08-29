@@ -32,5 +32,8 @@ class BookController:
         updated_book = self.book_use_case.update_book(book_dict_pydantic)  # type: ignore
         return updated_book
 
+    def toggle_book_status(self, book_id: int) -> dict[str, Any]:
+        return self.book_use_case.toggle_book_status(book_id)
+
     def delete_book(self, book_id: int) -> List[dict[str, Any]]:
         return self.book_use_case.delete_book(book_id)
