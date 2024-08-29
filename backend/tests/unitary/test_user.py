@@ -86,7 +86,7 @@ class TestController:
         user_data.pop("id", None)
 
         # Act
-        created_user = user_controller.create_user(user_data)  # type: ignore
+        status_code_create_user, created_user = user_controller.create_user(user_data)  # type: ignore
 
         # Assert
         assert created_user == user_data_assert
@@ -131,11 +131,12 @@ class TestController:
         for user_data in user_data_list:
             user_data_without_id = user_data.copy()
             user_data_without_id.pop("id", None)
-            created_user = user_controller.create_user(user_data_without_id)  # type: ignore
+            status_code_create_user, created_user = user_controller.create_user(user_data_without_id)  # type: ignore
             created_users.append(created_user)
-        listed_users = user_controller.list_users()
+        status_code_list_users, listed_users = user_controller.list_users()
 
         # Assert
+        assert status_code_list_users == 200
         assert len(listed_users) == len(users)
         assert listed_users == created_users
 
@@ -147,7 +148,7 @@ class TestController:
 
         # Act
         user_controller.create_user(user_data)  # type: ignore
-        logged_user = user_controller.login_user(login_data)  # type: ignore
+        status_code_login_user, logged_user = user_controller.login_user(login_data)  # type: ignore
 
         # Assert
         assert logged_user["email"] == login_data["email"]
@@ -171,11 +172,12 @@ class TestController:
         user_data.pop("id", None)
 
         # Act
-        created_user = user_controller.create_user(user_data)  # type: ignore
+        status_code_create_user, created_user = user_controller.create_user(user_data)  # type: ignore
         user_id: int = created_user["id"]
-        fetched_user = user_controller.get_by_id(user_id)
+        status_code_get_by_id, fetched_user = user_controller.get_by_id(user_id)
 
         # Assert
+        assert status_code_get_by_id == 200
         assert fetched_user == created_user
 
     def test_update_user(self, user_controller: UserController, user_builder: User):
@@ -185,11 +187,12 @@ class TestController:
         user_data.pop("id", None)
 
         # Act
-        created_user = user_controller.create_user(user_data)  # type: ignore
+        status_code_create_user, created_user = user_controller.create_user(user_data)  # type: ignore
         user_id = created_user["id"]
-        updated_user = user_controller.update_user(user_id, update_data)
+        status_code_update_user, updated_user = user_controller.update_user(user_id, update_data)
 
         # Assert
+        assert status_code_update_user == 200
         assert updated_user["name"] == "Updated Name"
         assert updated_user["email"] == "updatedemail@example.com"
         assert updated_user["age"] == 35
@@ -200,7 +203,7 @@ class TestController:
         user_data.pop("id", None)
 
         # Act
-        created_user = user_controller.create_user(user_data)  # type: ignore
+        status_code_create_user, created_user = user_controller.create_user(user_data)  # type: ignore
         user_id = created_user["id"]
         user_controller.delete_user(user_id)
 

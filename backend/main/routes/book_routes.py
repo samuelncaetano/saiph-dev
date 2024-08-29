@@ -28,8 +28,8 @@ def route(path: str, method: str, middlewares=None):  # type: ignore
 @route("/books", "GET")
 def get_all_books(request, controller: BookController):  # pylint: disable = W0613   # type: ignore
     def handler():
-        books = controller.list_books()
-        return 200, books
+        status, books = controller.list_books()
+        return status, books
 
     return handler
 
@@ -39,8 +39,8 @@ def get_books_by_id(
     request, controller: BookController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
 ):
     def handler():
-        book = controller.get_by_id(int(id))
-        return 200, book
+        status, books = controller.get_by_id(int(id))
+        return status, books
 
     return handler
 
@@ -50,8 +50,8 @@ def get_books_by_user_id(
     request, controller: BookController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
 ):
     def handler():
-        book = controller.get_by_user_id(int(id))
-        return 200, book
+        status, books = controller.get_by_user_id(int(id))
+        return status, books
 
     return handler
 
@@ -61,8 +61,8 @@ def post_book(
     request, controller: BookController, book_data: dict[str, Any]  # pylint: disable = W0613  # type: ignore
 ):
     def handler():
-        book = controller.create_book(book_data)
-        return 201, book
+        status, book = controller.create_book(book_data)
+        return status, book
 
     return handler
 
@@ -70,8 +70,8 @@ def post_book(
 @route("/books/<id>", "PATCH")
 def patch_book(request, controller: BookController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
     def handler(book_data: dict[str, Any]):
-        book = controller.update_book(int(id), book_data)
-        return 200, book
+        status, books = controller.update_book(int(id), book_data)
+        return status, books
 
     return handler
 
@@ -81,8 +81,8 @@ def toggle_book_status(
     request, controller: BookController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
 ):
     def handler(*args, **kwargs):  # pylint: disable = W0613   # type: ignore
-        book = controller.toggle_book_status(int(id))
-        return 200, book
+        status, books = controller.toggle_book_status(int(id))
+        return status, books
 
     return handler
 
@@ -90,8 +90,8 @@ def toggle_book_status(
 @route("/books/<id>", "DELETE")
 def delete_book(request, controller: BookController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
     def handler():
-        books = controller.delete_book(int(id))
-        return 200, books
+        status, books = controller.delete_book(int(id))
+        return status, books
 
     return handler
 

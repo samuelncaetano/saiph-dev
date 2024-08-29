@@ -29,8 +29,8 @@ def route(path: str, method: str, middlewares=None):  # type: ignore
 @route("/users", "GET")
 def get_users(request, controller: UserController):  # pylint: disable = W0613   # type: ignore
     def handler():
-        users = controller.list_users()
-        return 200, users
+        status, user = controller.list_users()
+        return status, user
 
     return handler
 
@@ -40,8 +40,8 @@ def get_users_by_id(
     request, controller: UserController, id: int  # pylint: disable = C0103, W0622, W0613   # type: ignore
 ):
     def handler():
-        user = controller.get_by_id(int(id))
-        return 200, user
+        status, user = controller.get_by_id(int(id))
+        return status, user
 
     return handler
 
@@ -51,8 +51,8 @@ def post_user(
     request, controller: UserController, user_data: dict[str, Any]  # pylint: disable = W0613  # type: ignore
 ):
     def handler():
-        user = controller.create_user(user_data)
-        return 201, user
+        status, user = controller.create_user(user_data)
+        return status, user
 
     return handler
 
@@ -62,8 +62,8 @@ def login_user(
     request, controller: UserController, login_data: dict[str, Any]  # pylint: disable = W0613   # type: ignore
 ):
     def handler():
-        user = controller.login_user(login_data)
-        return 200, user
+        status, user = controller.login_user(login_data)
+        return status, user
 
     return handler
 
@@ -71,8 +71,8 @@ def login_user(
 @route("/users/<id>", "PATCH")
 def patch_user(request, controller: UserController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
     def handler(user_data: dict[str, Any]):
-        user = controller.update_user(int(id), user_data)
-        return 200, user
+        status, user = controller.update_user(int(id), user_data)
+        return status, user
 
     return handler
 
@@ -80,8 +80,8 @@ def patch_user(request, controller: UserController, id: int):  # pylint: disable
 @route("/users/<id>", "DELETE")
 def delete_user(request, controller: UserController, id: int):  # pylint: disable = C0103, W0622, W0613   # type: ignore
     def handler():
-        users = controller.delete_user(int(id))
-        return 200, users
+        status, user = controller.delete_user(int(id))
+        return status, user
 
     return handler
 

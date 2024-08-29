@@ -57,7 +57,7 @@ def book_list(book_controller: BookController):
     for book_data in book_data_list:
         book_data_without_id = book_data.copy()
         book_data_without_id.pop("id", None)
-        created_book = book_controller.create_book(book_data_without_id)  # type: ignore
+        status_code_create_book, created_book = book_controller.create_book(book_data_without_id)  # type: ignore
         created_books.append(created_book)
 
     return created_books
@@ -70,6 +70,7 @@ class TestBook:
     def test_book_creation(self, book_builder: Book):
         assert book_builder.title == book_builder.get_title()
         assert book_builder.user_id == book_builder.get_user_id()
+        assert book_builder.status == book_builder.get_status()
 
     def test_create_an_untitled_book(self):
         with pytest.raises(ValidationError):  # type: ignore
@@ -94,16 +95,17 @@ class TestController:
         book_data.pop("id", None)
 
         # Act
-        created_book = book_controller.create_book(book_data)  # type: ignore
+        status_code_create_book, created_book = book_controller.create_book(book_data)  # type: ignore
 
         # Assert
         assert created_book == book_data_assert
 
     def test_list_books(self, book_controller: BookController, book_list: list[Book]):
         # Act
-        listed_books = book_controller.list_books()
+        status_code_list_books, listed_books = book_controller.list_books()
 
         # Assert
+        assert status_code_list_books == 200
         assert len(listed_books) == len(book_list)
         assert listed_books == book_list
 
@@ -113,11 +115,12 @@ class TestController:
         book_data.pop("id", None)
 
         # Act
-        created_book = book_controller.create_book(book_data)  # type: ignore
+        status_code_create_book, created_book = book_controller.create_book(book_data)  # type: ignore
         book_id: int = created_book["id"]
-        fetched_book = book_controller.get_by_id(book_id)
+        status_code_get_by_id, fetched_book = book_controller.get_by_id(book_id)
 
         # Assert
+        assert status_code_get_by_id == 200
         assert fetched_book == created_book
 
     def test_get_book_by_user_id(self, book_controller: BookController, book_list: list[Book], book_builder: Book):
@@ -129,9 +132,10 @@ class TestController:
         ]
 
         # Act
-        listed_books = book_controller.get_by_user_id(user_id)
+        status_code_get_by_user_id, listed_books = book_controller.get_by_user_id(user_id)
 
         # Assert
+        assert status_code_get_by_user_id == 200
         assert len(listed_books) == len(books)
         assert listed_books == books
 
@@ -142,33 +146,36 @@ class TestController:
         book_data.pop("id", None)
 
         # Act
-        created_book = book_controller.create_book(book_data)  # type: ignore
+        status_code_create_book, created_book = book_controller.create_book(book_data)  # type: ignore
         book_id = created_book["id"]
-        updated_book = book_controller.update_book(book_id, update_data)
+        status_code_update_book, updated_book = book_controller.update_book(book_id, update_data)
 
         # Assert
+        assert status_code_update_book == 200
         assert updated_book.get("title") == update_data.get("title")
 
     def test_toggle_book_status(self, book_controller: BookController, book_builder: Book):
         # Arrange
         book_data = book_to_pydantic(book_builder).model_dump()
         book_data.pop("id", None)
-        created_book = book_controller.create_book(book_data)  # type: ignore
+        status_code_create_book, created_book = book_controller.create_book(book_data)  # type: ignore
         book_id = created_book["id"]
 
         # Act
         initial_status = created_book["status"]
-        updated_book = book_controller.toggle_book_status(book_id)
+        status_code_toggle_book_status, updated_book = book_controller.toggle_book_status(book_id)
         toggled_status = updated_book["status"]
 
         # Assert
+        assert status_code_toggle_book_status == 200
         assert toggled_status == (not initial_status)
 
         # Act
-        updated_book = book_controller.toggle_book_status(book_id)
+        status_code_toggle_book_status, updated_book = book_controller.toggle_book_status(book_id)
         reverted_status = updated_book["status"]
 
         # Assert
+        assert status_code_toggle_book_status == 200
         assert reverted_status == initial_status
 
     def test_delete_book(self, book_controller: BookController, book_builder: Book):
@@ -177,7 +184,7 @@ class TestController:
         book_data.pop("id", None)
 
         # Act
-        created_book = book_controller.create_book(book_data)  # type: ignore
+        status_code_create_book, created_book = book_controller.create_book(book_data)  # type: ignore
         book_id = created_book["id"]
         book_controller.delete_book(book_id)
 
