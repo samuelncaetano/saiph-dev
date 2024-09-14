@@ -49,17 +49,17 @@ import {
         localStorage.setItem('user_id', response.data.id);
   
         toast({
-          title: "Login bem-sucedido",
-          description: "Você foi autenticado com sucesso.",
+          title: "Login success",
+          description: "You were authenticated with success.",
         });
   
         // Redireciona para o dashboard
         navigate("/dashboard");
       } catch (error) {
         toast({
-          title: "Erro no login",
+          title: "Login error",
           description:
-            "Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.",
+            "There ocurred an error when trying to login. Please, try again.",
           variant: "destructive",
         });
         console.error("Login error", error);
@@ -88,15 +88,15 @@ import {
           }
         )
         toast({
-          title: "Registro bem-sucedido",
-          description: "Sua conta foi criada com sucesso.",
+          title: "Sign-up success",
+          description: "Your account was created with success.",
         })
         // Aqui você pode automaticamente fazer login do usuário, redirecionar, etc.
         console.log("Registration successful", response.data)
       } catch (error) {
         toast({
-          title: "Erro no registro",
-          description: "Ocorreu um erro ao tentar criar sua conta. Por favor, tente novamente.",
+          title: "Sign-up error",
+          description: "There ocurred an error when trying to create your account. Please, try again.",
           variant: "destructive",
         })
         console.error("Registration error", error)
@@ -110,30 +110,30 @@ import {
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <Card className="w-[350px]">
           <CardHeader>
-            <CardTitle>Bem-vindo</CardTitle>
-            <CardDescription>Faça login ou crie uma nova conta</CardDescription>
+            <CardTitle>Welcome</CardTitle>
+            <CardDescription>Sign in or create a new account</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Registro</TabsTrigger>
+                <TabsTrigger value="register">Sign up</TabsTrigger>
               </TabsList>
               <TabsContent value="login">
                 <form onSubmit={handleLogin}>
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="login-email">Email</Label>
+                      <Label htmlFor="login-email">E-mail</Label>
                       <Input
                         id="login-email"
                         name="login-email"
                         type="email"
-                        placeholder="seu@email.com"
+                        placeholder="your@email.com"
                         required
                       />
                     </div>
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="login-password">Senha</Label>
+                      <Label htmlFor="login-password">Password</Label>
                       <Input
                         id="login-password"
                         name="login-password"
@@ -147,7 +147,7 @@ import {
                     type="submit"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Entrando..." : "Entrar"}
+                    {isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
               </TabsContent>
@@ -155,24 +155,24 @@ import {
                 <form onSubmit={handleRegister}>
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="register-name">Nome</Label>
-                      <Input id="register-name" name="register-name" placeholder="Seu nome" required />
+                      <Label htmlFor="register-name">Name</Label>
+                      <Input id="register-name" name="register-name" placeholder="your name" required />
                     </div>
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="register-email">Email</Label>
-                      <Input id="register-email" name="register-email" type="email" placeholder="seu@email.com" required />
+                      <Label htmlFor="register-email">E-mail</Label>
+                      <Input id="register-email" name="register-email" type="email" placeholder="your@email.com" required />
                     </div>
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="register-password">Senha</Label>
+                      <Label htmlFor="register-password">Password</Label>
                       <Input id="register-password" name="register-password" type="password" required />
                     </div>
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="register-password">Idade</Label>
+                      <Label htmlFor="register-password">Age</Label>
                       <Input id="register-age" name="register-age" type="age" required />
                     </div>
                   </div>
                   <Button className="w-full mt-6" type="submit" disabled={isLoading}>
-                    {isLoading ? "Registrando..." : "Registrar"}
+                    {isLoading ? "Signing in..." : "Sign in"}
                   </Button>
                 </form>
               </TabsContent>
@@ -180,7 +180,7 @@ import {
           </CardContent>
           <CardFooter className="flex justify-center">
             <p className="text-sm text-gray-500">
-              Ao continuar, você concorda com nossos Termos de Serviço e Política de Privacidade.
+              By continuing, you agree to our Terms of Service and Privacy Policy.
             </p>
           </CardFooter>
         </Card>
