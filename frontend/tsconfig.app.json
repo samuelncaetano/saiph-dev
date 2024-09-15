@@ -27,5 +27,5 @@
       ]
     }
   },
-  "include": ["src", "src/pages/my_comp"]
+  "include": ["src"]
 }
